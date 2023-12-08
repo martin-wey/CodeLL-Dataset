@@ -7,7 +7,13 @@ import time
 
 import swh_utils as swh
 
-TOKEN = ("YOUR SWH AUTH TOKEN")
+TOKEN = ("eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJhMTMxYTQ1My1hM2IyLTQwMTUtODQ2Ny05MzAyZjk3MTFkOGEifQ.eyJpYX"
+         "QiOjE2OTc0NzE3NTcsImp0aSI6ImM1YWJmYjZlLTI4MTItNDdhYi05YmYzLTY0YzgwYTFkYTE1ZiIsImlzcyI6Imh0dHBzOi8vYXV0aC5zb2Z"
+         "0d2FyZWhlcml0YWdlLm9yZy9hdXRoL3JlYWxtcy9Tb2Z0d2FyZUhlcml0YWdlIiwiYXVkIjoiaHR0cHM6Ly9hdXRoLnNvZnR3YXJlaGVyaXRh"
+         "Z2Uub3JnL2F1dGgvcmVhbG1zL1NvZnR3YXJlSGVyaXRhZ2UiLCJzdWIiOiI0ODJhYWQ5MC1hYThlLTQyNmQtYTAwMS04YWEzZDJmZTA0NzQiL"
+         "CJ0eXAiOiJPZmZsaW5lIiwiYXpwIjoic3doLXdlYiIsInNlc3Npb25fc3RhdGUiOiI1YzVmMjNjMi04ODVlLTQ3N2MtYWFjMy0yYzE3YzEyZG"
+         "IzOTMiLCJzY29wZSI6Im9wZW5pZCBvZmZsaW5lX2FjY2VzcyBwcm9maWxlIGVtYWlsIn0.WynssKOGllmUxLMdolJYMcLfNYr2snjnqfkozz"
+         "b87pE")
 version_regex = r'(v?\d+\.\d+(\.\d+)*)'
 
 tqdm_kwargs = {

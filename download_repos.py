@@ -33,7 +33,7 @@ if __name__ == '__main__':
     data = pd.read_csv(args.download_data_fp)
 
     for index, row in tqdm(data.iterrows(), total=len(data), **tqdm_kwargs):
-        # mitigate too many requests error on SWH API
+        # mitigate too many requests error on SH API
         if index % 10 == 0:
             time.sleep(5)
 
