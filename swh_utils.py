@@ -30,9 +30,10 @@ def run_request(url, auth_token, request_type='get', max_attempts=5):
             elif response.status_code == 429:
                 print(f'Too many requests.')
                 time.sleep(1000)
-        except http.client.RemoteDisconnected or requests.exceptions.ReadTimeout or requests.exceptions.ConnectionError\
-                or requests.exceptions.ConnectTimeout:
-            attempt += 1
+        except (http.client.RemoteDisconnected, requests.exceptions.ReadTimeout,
+                requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout,
+                requests.exceptions.SSLError):
+            pass
 
     return None
 
@@ -56,6 +57,8 @@ def get_download_url(target_url, auth_token):
 
     if release_data is not None:
         release_data_content = release_data.json()
+        if isinstance(release_data_content, list):
+            return None, None, None
         release_id = release_data_content.get('target', release_data_content.get('directory'))
         release = run_request(f'{SEARCH_VAULT}{release_id}/', auth_token=auth_token, request_type='post')
         release_name = release_data_content.get('name', 'None')
