@@ -33,11 +33,15 @@ if __name__ == '__main__':
     data = pd.read_csv(args.download_data_fp)
 
     for index, row in tqdm(data.iterrows(), total=len(data), **tqdm_kwargs):
-        # mitigate too many requests error on SH API
+        # avoid too many requests error on SH API
         if index % 10 == 0:
             time.sleep(5)
 
-        repo_name = row['repository'].split('/')[-1] if 'github' in args.download_data_fp else row['repository'].split('/')[-2]
+        repository_url = row['repository']
+        if 'github' in args.download_data_fp or 'gitlab' in args.download_data_fp:
+            repo_name = repository_url.split('/')[-1]
+        else:
+            repo_name = repository_url.split('/')[-2]
         repo_dir = f'{args.output_dir}/{repo_name}'
         os.makedirs(repo_dir, exist_ok=True)
 
