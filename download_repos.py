@@ -32,21 +32,24 @@ if __name__ == '__main__':
     os.makedirs(args.output_dir, exist_ok=True)
     data = pd.read_csv(args.download_data_fp)
 
+    n = 0
+    n_download = 0
     for index, row in tqdm(data.iterrows(), total=len(data), **tqdm_kwargs):
-        # avoid too many requests error on SH API
-        if index % 10 == 0:
-            time.sleep(5)
-
         repository_url = row['repository']
-        if 'github' in args.download_data_fp or 'gitlab' in args.download_data_fp:
+        if 'github' in repository_url or 'gitlab' in repository_url:
             repo_name = repository_url.split('/')[-1]
         else:
             repo_name = repository_url.split('/')[-2]
         repo_dir = f'{args.output_dir}/{repo_name}'
-        os.makedirs(repo_dir, exist_ok=True)
+
+        if not os.path.exists(repo_dir):
+            os.makedirs(repo_dir, exist_ok=True)
 
         repo_branch = row['branch'].replace('/', '-')
         repo_branch_dir = f'{repo_dir}/{repo_branch}'
+
+        if os.path.exists(f'{repo_branch_dir}/data.tar.gz'):
+            continue
         os.makedirs(repo_branch_dir, exist_ok=True)
 
         try:
@@ -56,3 +59,8 @@ if __name__ == '__main__':
                 file.write(response.content)
         except Exception as e:
             logging.info(f"Error downloading {row['download_link']}: {e}")
+
+        n_download += 1
+        # avoid too many requests error on SH API
+        if n_download % 25 == 0:
+            time.sleep(5)

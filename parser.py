@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 from packaging.requirements import InvalidRequirement
-from pkg_resources import parse_requirements
+from pkg_resources import parse_requirements, Requirement
 from tqdm import tqdm
 
 tqdm_kwargs = {
@@ -21,9 +21,9 @@ class Repository:
         self.relative_path = os.path.relpath(self.path, base_path)
         self.num_workers = num_workers
         self.files = []
-        self.requirements = []
+        self.requirements = None
         self.init_python_files()
-        # self.init_requirements()
+        self.init_requirements()
 
     def init_python_files(self):
         python_files = [Path(file) for file in glob.iglob(os.path.join(self.path, '**/*.py'), recursive=True)]
@@ -42,8 +42,6 @@ class Repository:
         return PythonFile(file, self)
 
     def init_requirements(self):
-        # @todo: fix parsing of:
-        #   e.g., git+https://github.com/ShangtongZhang/dm_control2gym.git@scalar_fix
         requirements_file_path = os.path.join(self.path, 'requirements.txt')
 
         if os.path.exists(requirements_file_path):
@@ -159,16 +157,30 @@ class PythonFile:
 class RequirementsFile:
     def __init__(self, path):
         self.path = path
-        self.requirements = list(self.parse_requirements())
+        self.requirements = {}
 
-    def parse_requirements(self):
-        try:
-            with open(self.path, "r") as file:
-                requirements = parse_requirements(file)
-                for req in requirements:
-                    yield {req.name: [str(spec) for spec in req.specs]}
-        except InvalidRequirement as e:
-            print(f"Error parsing requirement: {e}")
+    def parse(self):
+        with open(self.path, "r") as file:
+            requirements = file.readlines()
+
+        for req_line in requirements:
+            req_line = req_line.strip()
+            if req_line and not req_line.startswith('#'):
+                if self.is_standard_format(req_line):
+                    try:
+                        req = Requirement.parse(req_line)
+                        self.requirements[req.name] = [str(spec) for spec in req.specs]
+                    except Exception as e:
+                        print(f"Error parsing requirement '{req_line}': {e}")
+                else:
+                    # handle non-standard formats (Git, HTTP/HTTPS, local paths)
+                    self.requirements[req_line] = []
+
+    def is_standard_format(self, requirement):
+        """
+        Checks if a requirement is in a standard format that can be parsed by pkg_resources.
+        """
+        return not requirement.startswith(('git+', 'http://', 'https://', './'))
 
 
 class Method:
