@@ -4,6 +4,12 @@ Official repository associated with the MSR24 submission "CodeLL: A Lifelong Lea
 
 The first part of this README describes how to reproduce the data mining procedure of the paper. Then, it introduces how to perform the code change analysis.
 
+--- 
+
+**The repository is still under construction as we are preparing the release of a second version of the dataset.**
+
+---
+
 ## Dataset
 
 You can download the initial version of `CodeLL` using the following link: https://zenodo.org/records/10248423.
